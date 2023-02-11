@@ -45,9 +45,19 @@ ORDER BY worldwide_gross DESC
 LIMIT 5;
 
 	--ANSWER: Toy Story 4, dist. Walt Disney
+	
+	
 
 -- 4. Write a query that returns, for each distributor in the distributors table, the distributor name and the number of movies associated with that distributor in the movies 
 -- table. Your result set should include all of the distributors, whether or not they have any movies in the movies table.
+
+SELECT company_name as distributor,
+	COUNT(film_title) as count_associated_films
+FROM distributors as d
+	FULL JOIN specs as s
+	ON d.distributor_id = s.domestic_distributor_id
+GROUP by company_name
+ORDER by count_associated_films DESC;
 
 -- 5. Write a query that returns the five distributors with the highest average movie budget.
 
