@@ -94,8 +94,23 @@ WHERE headquarters NOT LIKE '%CA'
 ORDER by imdb_rating DESC;
 
 	--ANSWER: two movies, the higher rated being Dirty Dancing
+	--UNLESS: null headquarters counts as "Not California"
 	
-	
+SELECT film_title,
+	imdb_rating,
+	headquarters
+FROM distributors as d
+	FULL JOIN specs as s
+		ON d.distributor_id = s.domestic_distributor_id
+	INNER JOIN rating as r
+		ON s.movie_id = r.movie_id
+WHERE s.domestic_distributor_id ISNULL
+	OR headquarters NOT LIKE '%CA'
+ORDER by imdb_rating DESC;
+
+	--IN WHICH CASE: 13 movies, topped by Annie Hall
+
+
 
 -- 7. Which have a higher average rating, movies which are over two hours long or movies which are under two hours?
 
