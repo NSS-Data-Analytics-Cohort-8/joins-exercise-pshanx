@@ -1,5 +1,7 @@
 -- ** Movie Database project. See the file movies_erd for table\column info. **
 
+
+
 -- 1. Give the name, release year, and worldwide gross of the lowest grossing movie.
 
 SELECT film_title as title, 
@@ -28,6 +30,8 @@ ORDER BY avg_rating DESC
 LIMIT 5;
 
 	--ANSWER: 1991 at a rating of 7.45
+
+
 
 -- 3. What is the highest grossing G-rated movie? Which company distributed it?
 
@@ -59,8 +63,50 @@ FROM distributors as d
 GROUP by company_name
 ORDER by count_associated_films DESC;
 
+
+
 -- 5. Write a query that returns the five distributors with the highest average movie budget.
+
+SELECT company_name,
+	ROUND(AVG(film_budget), 2) as avg_budgie
+FROM distributors as d
+	INNER JOIN specs as s
+		ON d.distributor_id = s.domestic_distributor_id
+	INNER JOIN revenue as rev
+		ON s.movie_id = rev.movie_id
+GROUP by company_name
+ORDER by avg_budgie DESC
+LIMIT 5;
+
+
 
 -- 6. How many movies in the dataset are distributed by a company which is not headquartered in California? Which of these movies has the highest imdb rating?
 
+SELECT film_title,
+	imdb_rating,
+	headquarters
+FROM distributors as d
+	INNER JOIN specs as s
+		ON d.distributor_id = s.domestic_distributor_id
+	INNER JOIN rating as r
+		ON s.movie_id = r.movie_id
+WHERE headquarters NOT LIKE '%CA'
+ORDER by imdb_rating DESC;
+
+	--ANSWER: two movies, the higher rated being Dirty Dancing
+	
+	
+
 -- 7. Which have a higher average rating, movies which are over two hours long or movies which are under two hours?
+
+SELECT ROUND(AVG(imdb_rating), 2) as avg_rating_over,
+	(SELECT ROUND(AVG(imdb_rating), 2) FROM rating as r 
+	 INNER JOIN specs as s ON r.movie_id = s.movie_id
+	 WHERE length_in_min <120) 
+	 	as avg_rating_under
+FROM rating as r
+	INNER JOIN specs as s 
+		ON r.movie_id = s.movie_id
+WHERE length_in_min >120;
+
+	--ANSWER: movies over 2 hours rate higher
